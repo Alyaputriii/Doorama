@@ -26,13 +26,20 @@ bg-gradient-to-br from-stone-800 to-stone-600 gap-10">
 
         <h2 class="text-2xl font-bold mb-6 text-stone-800 text-center">Welcome Back</h2>
 
-        <form method="POST" action="/login">
+        @if ($errors->any())
+    <div class="mb-4 p-2 bg-red-100 text-red-700 rounded-lg text-sm">
+        {{ $errors->first() }}
+    </div>
+    @endif
+
+        <form method="POST" action="{{ route('login.post') }}">
             @csrf
 
             <!-- Email -->
             <div class="mb-4">
                 <label class="text-stone-700 text-sm">Email</label>
-                <input type="email" name="email"
+                <input type="email" name="email" required
+                    value="{{ old('email') }}"
                     class="w-full mt-1 border border-stone-300 p-2 rounded-lg bg-white text-stone-800 
                     focus:outline-none focus:ring-2 focus:ring-stone-600 transition"
                     placeholder="Enter your email">
@@ -41,7 +48,7 @@ bg-gradient-to-br from-stone-800 to-stone-600 gap-10">
             <!-- Password -->
             <div class="mb-4">
                 <label class="text-stone-700 text-sm">Password</label>
-                <input type="password" name="password"
+                <input type="password" name="password" required
                     class="w-full mt-1 border border-stone-300 p-2 rounded-lg bg-white text-stone-800 
                     focus:outline-none focus:ring-2 focus:ring-stone-600 transition"
                     placeholder="Enter your password">
