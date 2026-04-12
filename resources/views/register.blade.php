@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Register - Dooroma</title>
+    <title>Register - Doorama</title>
     @vite(['resources/css/app.css'])
 </head>
 
@@ -10,7 +10,7 @@ bg-gradient-to-br from-stone-800 to-stone-600 gap-10">
 
     <!-- LEFT SIDE -->
     <div class="text-stone-100 max-w-lg text-center lg:text-left">
-        <h1 class="text-2xl font-bold mb-6 tracking-widest text-stone-200">DOOROMA</h1>
+        <h1 class="text-2xl font-bold mb-6 tracking-widest text-stone-200">DOORAMA</h1>
 
         <h2 class="text-3xl lg:text-5xl font-bold mb-4 leading-tight">
             Create Your Account
@@ -26,13 +26,13 @@ bg-gradient-to-br from-stone-800 to-stone-600 gap-10">
 
         <h2 class="text-2xl font-bold mb-6 text-stone-800 text-center">Sign Up</h2>
 
-        <form method="POST" action="/register">
+        <form method="POST" action="{{ route('register.post') }}">
             @csrf
 
             <!-- Nama -->
             <div class="mb-4">
                 <label class="text-stone-700 text-sm">Nama</label>
-                <input type="text" name="nama" required
+                <input type="text" name="nama" value="{{ old('nama') }}" required
                     class="w-full mt-1 border border-stone-300 p-2 rounded-lg bg-white text-stone-800 
                     focus:outline-none focus:ring-2 focus:ring-stone-600 transition"
                     placeholder="Enter your name">
@@ -41,7 +41,7 @@ bg-gradient-to-br from-stone-800 to-stone-600 gap-10">
             <!-- Email -->
             <div class="mb-4">
                 <label class="text-stone-700 text-sm">Email</label>
-                <input type="email" name="email" required
+                <input type="email" name="email" value="{{ old('email') }}" required
                     class="w-full mt-1 border border-stone-300 p-2 rounded-lg bg-white text-stone-800 
                     focus:outline-none focus:ring-2 focus:ring-stone-600 transition"
                     placeholder="Enter your email">
@@ -70,6 +70,16 @@ bg-gradient-to-br from-stone-800 to-stone-600 gap-10">
             hover:bg-stone-800 transition shadow-md">
                 Sign Up
             </button>
+
+            @if ($errors->any())
+                <div class="mb-4 rounded-lg bg-red-100 p-3 text-sm text-red-700">
+                    <ul class="list-disc pl-5">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
 
             <!-- Divider -->
             <div class="flex items-center my-4">

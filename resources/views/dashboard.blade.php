@@ -19,13 +19,16 @@
         </h1>
 
         <p class="text-stone-100 text-xl font-bold tracking-wide">
-            Hai, Balqis 👋
+            Hai, {{ Auth::user()->nama }} 👋
         </p>
     </div>
 
-    <a href="/logout" class="mt-2 inline-block px-3 py-1 text-sm rounded-lg bg-amber-800 text-stone-100 hover:bg-amber-700 transition">
-        Logout
-    </a>
+    <form action="{{ route('logout') }}" method="POST" class="mt-2">
+    @csrf
+        <button type="submit" class="inline-block px-3 py-1 text-sm rounded-lg bg-amber-800 text-stone-100 hover:bg-amber-700 transition">
+            Logout
+        </button>
+    </form>
 
 </div>
     <!-- GRID -->
@@ -35,8 +38,8 @@
         <div class="bg-white/90 backdrop-blur rounded-2xl shadow-lg p-6 flex flex-col justify-between hover:-translate-y-1 transition duration-300">
             <div>
                 <h2 class="text-stone-700 font-semibold mb-3">Door Status</h2>
-                <span class="inline-block px-3 py-1 text-sm rounded-full bg-red-100 text-red-600 font-semibold">
-                    Locked
+                <span class="inline-block px-3 py-1 text-sm rounded-full font-semibold
+                    {{ $doorStatus === 'locked' ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600' }}">{{ ucfirst($doorStatus) }}
                 </span>
             </div>
             <p class="text-stone-500 text-sm mt-6">Last activity: 12:01</p>
@@ -62,7 +65,7 @@
             <div>
                 <h2 class="text-stone-700 font-semibold mb-3">Security</h2>
                 <p class="text-stone-600 text-sm">
-                    Failed Attempts (24h): <b class="text-stone-900">3</b>
+                    Failed Attempts (24h): <b class="text-stone-900">{{ $failedAttempts }}</b>
                 </p>
             </div>
             <p class="text-stone-500 text-sm mt-6">Last Failed: 13:22</p>
@@ -89,7 +92,22 @@
 
             <div class="space-y-3 text-sm text-stone-700">
 
-                <div class="flex justify-between border-b pb-2">
+            <div class="space-y-3 text-sm text-stone-700">
+                @forelse ($recentActivities as $activity)
+                    <div class="flex justify-between border-b pb-2">
+                        <span>{{ $activity->description }}</span>
+                        <span class="text-stone-400">
+                            {{ \Carbon\Carbon::parse($activity->created_at)->format('H:i') }}
+                        </span>
+                    </div>
+                @empty
+                    <div class="flex justify-between">
+                        <span>Tidak ada aktivitas</span>
+                    </div>
+                @endforelse
+            </div>
+
+                <!-- <div class="flex justify-between border-b pb-2">
                     <span>Door Unlocked</span>
                     <span class="text-stone-400">12:01</span>
                 </div>
@@ -102,7 +120,7 @@
                 <div class="flex justify-between">
                     <span>Door Locked</span>
                     <span class="text-stone-400">11:05</span>
-                </div>
+                </div> -->
 
             </div>
 

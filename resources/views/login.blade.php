@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Login - Dooroma</title>
+    <title>Login - Doorama</title>
     @vite(['resources/css/app.css'])
 </head>
 
@@ -10,7 +10,7 @@ bg-gradient-to-br from-stone-800 to-stone-600 gap-10">
 
     <!-- LEFT SIDE -->
     <div class="text-stone-100 max-w-lg text-center lg:text-left">
-        <h1 class="text-2xl font-bold mb-6 tracking-widest text-stone-200">DOOROMA</h1>
+        <h1 class="text-2xl font-bold mb-6 tracking-widest text-stone-200">DOORAMA</h1>
 
         <h2 class="text-3xl lg:text-5xl font-bold mb-4 leading-tight">
             Secure Your Home With Confidence
@@ -48,10 +48,28 @@ bg-gradient-to-br from-stone-800 to-stone-600 gap-10">
             <!-- Password -->
             <div class="mb-4">
                 <label class="text-stone-700 text-sm">Password</label>
-                <input type="password" name="password" required
-                    class="w-full mt-1 border border-stone-300 p-2 rounded-lg bg-white text-stone-800 
+
+                <div class="relative">
+                <input type="password" name="password" id="password" required
+                    class="w-full mt-1 border border-stone-300 p-2 pr-10 rounded-lg bg-white text-stone-800 
                     focus:outline-none focus:ring-2 focus:ring-stone-600 transition"
                     placeholder="Enter your password">
+                <button type="button" onclick="togglePassword()" 
+                    class="absolute right-3 top-1/2 -translate-y-1/2 text-stone-500">
+                
+                    <svg id="eyeOpen" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+
+                    <!-- Mata tertutup -->
+                    <svg id="eyeClose" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.27-2.943-9.543-7a9.956 9.956 0 012.042-3.362M6.223 6.223A9.953 9.953 0 0112 5c4.478 0 8.27 2.943 9.543 7a9.97 9.97 0 01-4.132 5.411M15 12a3 3 0 00-3-3m0 0a3 3 0 00-3 3m3-3v.01M3 3l18 18" />
+                    </svg> 
+                </button>
             </div>
 
             <!-- Forgot -->
@@ -84,6 +102,24 @@ bg-gradient-to-br from-stone-800 to-stone-600 gap-10">
 </p>
         </form>
     </div>
+
+    <script>
+    function togglePassword() {
+        const password = document.getElementById("password");
+        const eyeOpen = document.getElementById("eyeOpen");
+        const eyeClose = document.getElementById("eyeClose");
+
+        if (password.type === "password") {
+            password.type = "text";
+            eyeOpen.classList.add("hidden");
+            eyeClose.classList.remove("hidden");
+        } else {
+            password.type = "password";
+            eyeOpen.classList.remove("hidden");
+            eyeClose.classList.add("hidden");
+        }
+    }
+    </script>
 
 </body>
 </html>
