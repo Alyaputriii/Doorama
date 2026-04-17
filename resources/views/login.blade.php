@@ -72,12 +72,12 @@ bg-gradient-to-br from-stone-800 to-stone-600 gap-10">
                 </button>
             </div>
 
-            <!-- Forgot -->
-            <div class="flex justify-end mb-4">
-                <p class="text-sm text-stone-500 cursor-pointer hover:text-stone-700 transition">
-                    Forgot password?
-                </p>
-            </div>
+           <div class="flex justify-end mb-4">
+    <a href="{{ route('password.request') }}"
+       class="text-sm text-stone-500 hover:text-stone-700 transition">
+        Lupa password?
+    </a>
+</div>
 
             <!-- Button -->
             <button class="w-full bg-stone-700 text-white p-2 rounded-lg font-semibold 
@@ -94,10 +94,10 @@ bg-gradient-to-br from-stone-800 to-stone-600 gap-10">
 
             <!-- Register -->
          <p class="text-center text-sm text-stone-600">
-    Don’t have an account?
+    Belum punya akun?
     <a href="/register" 
        class="text-stone-800 font-semibold hover:underline ml-1">
-        Sign up
+        Daftar
     </a>
 </p>
         </form>
