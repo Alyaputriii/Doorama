@@ -6,6 +6,75 @@
     @vite(['resources/css/app.css'])
 </head>
 
+@if (session('success'))
+    <div id="toast-success"
+         class="fixed top-5 right-5 z-50 w-[90%] max-w-sm rounded-xl border border-green-200 bg-green-50 px-4 py-3 shadow-lg transition-all duration-500">
+        <div class="flex items-start gap-3">
+            <div class="mt-0.5">
+                <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M5 13l4 4L19 7" />
+                </svg>
+            </div>
+
+            <div class="flex-1">
+                <p class="text-sm font-semibold text-green-800">Berhasil</p>
+                <p class="text-sm text-green-700">{{ session('success') }}</p>
+            </div>
+
+            <button type="button"
+                    onclick="closeToast('toast-success')"
+                    class="text-green-500 hover:text-green-700 transition">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+    </div>
+@endif
+
+@if ($errors->any())
+    <div id="toast-error"
+         class="fixed top-5 right-5 z-50 w-[90%] max-w-sm rounded-xl border border-red-200 bg-red-50 px-4 py-3 shadow-lg transition-all duration-500">
+        <div class="flex items-start gap-3">
+            <div class="mt-0.5">
+                <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M12 8v4m0 4h.01M10.29 3.86l-7.5 13A1 1 0 003.66 18h16.68a1 1 0 00.87-1.5l-7.5-13a1 1 0 00-1.74 0z" />
+                </svg>
+            </div>
+
+            <div class="flex-1">
+                <p class="text-sm font-semibold text-red-800">Gagal</p>
+                <p class="text-sm text-red-700">{{ $errors->first() }}</p>
+            </div>
+
+            <button type="button"
+                    onclick="closeToast('toast-error')"
+                    class="text-red-500 hover:text-red-700 transition">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+    </div>
+@endif
+
+<script>
+    function closeToast(id) {
+        const el = document.getElementById(id);
+        if (!el) return;
+
+        el.classList.add('opacity-0', 'translate-x-6');
+        setTimeout(() => el.remove(), 500);
+    }
+
+    setTimeout(() => closeToast('toast-success'), 2200);
+    setTimeout(() => closeToast('toast-error'), 2600);
+</script>
+
 <body class="min-h-screen bg-gradient-to-br from-stone-900 via-stone-800 to-stone-700 p-4 md:p-6">
 
 <!-- NAVBAR -->
@@ -19,7 +88,7 @@
     <!-- MENU -->
     <div class="flex flex-wrap justify-center md:justify-end items-center gap-4 md:gap-6 text-xs md:text-sm font-semibold text-stone-200">
 
-        <a href="/dashboard-dev" class="text-white border-b-2 border-white pb-1">
+        <a href="/dashboard" class="text-white border-b-2 border-white pb-1">
             Dashboard
         </a>
 
@@ -27,15 +96,19 @@
             Status
         </a>
 
-        <a href="/pengaturan" class="hover:text-white transition">Pengaturan</a>
-
+        <a href="/settings" class="hover:text-white transition">Settings</a>
+        
         <!-- LOGOUT -->
-        <form action="{{ route('logout') }}" method="POST">
-            @csrf
-            <button type="submit" class="hover:text-red-400 transition">
-                Logout
-            </button>
+        <form action="{{ route('logout') }}" method="POST" onsubmit="return confirmLogout()">
+        @csrf
+            <button type="submit">Logout</button>
         </form>
+
+        <script>
+        function confirmLogout() {
+            return confirm("Yakin ingin logout?");
+        }
+        </script>
 
     </div>
 

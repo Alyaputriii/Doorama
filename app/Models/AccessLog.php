@@ -25,4 +25,10 @@ class AccessLog extends Model
         'system_mode',
         'created_at',
     ];
+
+    protected $casts = [
+        'created_at' => 'datetime',
+        'ml_score' => 'float',
+        'knock_count' => 'integer'
+    ];
 }

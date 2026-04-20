@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\AccessLogController;
+use App\Http\Controllers\SettingsController;
 
 Route::get('/', function () {
     return redirect('/login');
@@ -14,47 +16,28 @@ Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 
 Route::get('/register', function () {
     return view('register');
-});
+})->name('register');
+
 Route::post('/register', [AuthController::class, 'register'])->name('register.post');
 
 // FORGOT PASSWORD
-Route::get('/forgot-password', function () {
-    return view('lupa-password');
-})->name('password.request');
+Route::get('/forgot-password', [AuthController::class, 'showForgotPasswordForm'])->name('password.request');
+Route::post('/forgot-password', [AuthController::class, 'sendResetLink'])->name('password.email');
 
-Route::post('/forgot-password', function () {
-    return redirect()->route('password.reset');
-});
-
-// RESET PASSWORD
-Route::get('/reset-password', function () {
-    return view('reset-password');
-})->name('password.reset');
-
-Route::post('/reset-password', function () {
-    return redirect()->route('login')->with('success', 'Password berhasil direset!');
-});
+Route::get('/reset-password/{token}', [AuthController::class, 'showResetPasswordForm'])->name('password.reset');
+Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.update');
 
 // PROTECTED
 Route::middleware('auth')->group(function () {
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    Route::get('/status', function () {
-        return view('status');
-    })->name('status');
+    Route::get('/status', [AccessLogController::class, 'index'])->name('status');
 
-    Route::get('/pengaturan', function () {
-        return view('pengaturan', [
-            'knocks' => 6,
-            'status' => 'Online'
-        ]);
-    })->name('pengaturan');
+    Route::get('/settings', [SettingsController::class, 'index'])->name('settings');
+    Route::get('/settings/edit', [SettingsController::class, 'edit'])->name('settings.edit');
+    Route::post('/settings', [SettingsController::class, 'store'])->name('settings.store');
+    Route::post('/reset-setting', [SettingsController::class, 'reset'])->name('settings.reset');
 
-    Route::get('/pengaturan/edit', function () {
-        return view('edit-pengaturan');
-    })->name('pengaturan.edit');
-
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
-
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
