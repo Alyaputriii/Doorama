@@ -6,15 +6,20 @@ use Illuminate\Database\Eloquent\Model;
 
 class KnockPattern extends Model
 {
+    protected $table = 'knock_patterns';
+    protected $primaryKey = 'pattern_id';
+
     protected $fillable = [
         'user_id',
-        'pattern_data',
+        'pattern_name',
+        'feature_data',
+        'threshold',
+        'is_active',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'pattern_data' => 'encrypted',
-        ];
-    }
+    protected $casts = [
+        'feature_data' => 'array',
+        'is_active' => 'boolean',
+        'threshold' => 'decimal:2',
+    ];
 }

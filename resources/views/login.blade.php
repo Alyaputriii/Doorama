@@ -5,6 +5,75 @@
     @vite(['resources/css/app.css'])
 </head>
 
+@if (session('success'))
+    <div id="toast-success"
+         class="fixed top-5 right-5 z-50 w-[90%] max-w-sm rounded-xl border border-green-200 bg-green-50 px-4 py-3 shadow-lg transition-all duration-500">
+        <div class="flex items-start gap-3">
+            <div class="mt-0.5">
+                <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M5 13l4 4L19 7" />
+                </svg>
+            </div>
+
+            <div class="flex-1">
+                <p class="text-sm font-semibold text-green-800">Berhasil</p>
+                <p class="text-sm text-green-700">{{ session('success') }}</p>
+            </div>
+
+            <button type="button"
+                    onclick="closeToast('toast-success')"
+                    class="text-green-500 hover:text-green-700 transition">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+    </div>
+@endif
+
+@if ($errors->any())
+    <div id="toast-error"
+         class="fixed top-5 right-5 z-50 w-[90%] max-w-sm rounded-xl border border-red-200 bg-red-50 px-4 py-3 shadow-lg transition-all duration-500">
+        <div class="flex items-start gap-3">
+            <div class="mt-0.5">
+                <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M12 8v4m0 4h.01M10.29 3.86l-7.5 13A1 1 0 003.66 18h16.68a1 1 0 00.87-1.5l-7.5-13a1 1 0 00-1.74 0z" />
+                </svg>
+            </div>
+
+            <div class="flex-1">
+                <p class="text-sm font-semibold text-red-800">Gagal</p>
+                <p class="text-sm text-red-700">{{ $errors->first() }}</p>
+            </div>
+
+            <button type="button"
+                    onclick="closeToast('toast-error')"
+                    class="text-red-500 hover:text-red-700 transition">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+    </div>
+@endif
+
+<script>
+    function closeToast(id) {
+        const el = document.getElementById(id);
+        if (!el) return;
+
+        el.classList.add('opacity-0', 'translate-x-6');
+        setTimeout(() => el.remove(), 500);
+    }
+
+    setTimeout(() => closeToast('toast-success'), 2200);
+    setTimeout(() => closeToast('toast-error'), 2600);
+</script>
+
 <body class="min-h-screen flex flex-col lg:flex-row items-center justify-center lg:justify-between px-6 lg:px-20 
 bg-gradient-to-br from-stone-800 to-stone-600 gap-10">
 
@@ -20,17 +89,17 @@ bg-gradient-to-br from-stone-800 to-stone-600 gap-10">
             SmartLock provides a seamless and secure way to manage access to your home. Monitor, control and protect your doors anytime anywhere with a system designed for reliability and ease of use.
         </p>
     </div>
-
+        
     <!-- RIGHT SIDE LOGIN -->
     <div class="bg-stone-100 p-6 lg:p-8 rounded-2xl shadow-2xl w-full max-w-sm border border-stone-200">
 
         <h2 class="text-2xl font-bold mb-6 text-stone-800 text-center">Welcome Back</h2>
 
         @if ($errors->any())
-    <div class="mb-4 p-2 bg-red-100 text-red-700 rounded-lg text-sm">
-        {{ $errors->first() }}
-    </div>
-    @endif
+            <div class="mb-4 p-2 bg-red-100 text-red-700 rounded-lg text-sm">
+                {{ $errors->first() }}
+            </div>
+        @endif
 
         <form method="POST" action="{{ route('login.post') }}">
             @csrf
