@@ -75,7 +75,7 @@ class AccessLogSeeder extends Seeder
             'ml_score' => 20.10,
             'door_state' => 'closed',
             'lock_state' => 'locked',
-            'system_mode' => 'normal',
+            'system_mode' => 'online',
             'created_at' => now()->subMinute(),
         ]);
     }

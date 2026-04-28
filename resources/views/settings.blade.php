@@ -19,16 +19,14 @@
         <a href="{{ route('status') }}" class="hover:text-white transition">Status</a>
         <a href="{{ route('settings') }}" class="text-white border-b-2 border-white pb-1">Settings</a>
 
-        <form action="{{ route('logout') }}" method="POST" onsubmit="return confirmLogout()">
+       <form id="logoutForm" action="{{ route('logout') }}" method="POST">
             @csrf
-            <button type="submit">Logout</button>
+            <button type="button"
+                onclick="openLogoutModal()"
+                class="hover:text-white transition">
+                Logout
+            </button>
         </form>
-
-        <script>
-        function confirmLogout() {
-            return confirm("Yakin ingin logout?");
-        }
-        </script>
     </div>
 </nav>
 
@@ -88,9 +86,10 @@
                 Edit
             </a>
 
-            <form action="{{ route('settings.reset') }}" method="POST">
+           <form id="resetForm" action="{{ route('settings.reset') }}" method="POST">
                 @csrf
-                <button type="submit"
+                <button type="button"
+                    onclick="openResetModal()"
                     class="px-4 py-2 rounded-xl bg-red-500 text-white text-sm hover:bg-red-600 transition">
                     Reset to Default
                 </button>
@@ -100,6 +99,100 @@
     </div>
 
 </div>
+
+    <!-- RESET CONFIRMATION MODAL -->
+    <div id="resetModal"
+        class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 px-4">
+        <div class="w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl">
+            <h3 class="text-lg font-bold text-stone-800 mb-2">
+                Reset Settings?
+            </h3>
+
+            <p class="text-sm text-stone-600 mb-6">
+                Are you sure you want to reset all settings to default?
+            </p>
+
+            <div class="flex justify-end gap-3">
+                <button type="button"
+                        onclick="closeResetModal()"
+                        class="px-4 py-2 rounded-xl bg-stone-200 text-stone-700 text-sm hover:bg-stone-300 transition">
+                    Cancel
+                </button>
+
+                <button type="button"
+                        onclick="submitResetForm()"
+                        class="px-4 py-2 rounded-xl bg-red-500 text-white text-sm hover:bg-red-600 transition">
+                    Yes, Reset
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    function openResetModal() {
+        const modal = document.getElementById('resetModal');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+
+    function closeResetModal() {
+        const modal = document.getElementById('resetModal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+
+    function submitResetForm() {
+        document.getElementById('resetForm').submit();
+    }
+    </script>
+
+<div id="logoutModal"
+    class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 px-4">
+
+    <div class="w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl">
+
+        <h3 class="text-lg font-bold text-stone-800 mb-2">
+            Log Out?
+        </h3>
+
+        <p class="text-sm text-stone-600 mb-6">
+            Are you sure you want to log out from your account?
+        </p>
+
+        <div class="flex justify-end gap-3">
+            <button type="button"
+                onclick="closeLogoutModal()"
+                class="px-4 py-2 rounded-xl bg-stone-200 text-stone-700 text-sm hover:bg-stone-300 transition">
+                Cancel
+            </button>
+
+            <button type="button"
+                onclick="submitLogoutForm()"
+                class="px-4 py-2 rounded-xl bg-red-500 text-white text-sm hover:bg-red-600 transition">
+                Yes, Log Out
+            </button>
+        </div>
+
+    </div>
+</div>
+
+<script>
+function openLogoutModal() {
+    const modal = document.getElementById('logoutModal');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+}
+
+function closeLogoutModal() {
+    const modal = document.getElementById('logoutModal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+}
+
+function submitLogoutForm() {
+    document.getElementById('logoutForm').submit();
+}
+</script>
 
 </body>
 </html>

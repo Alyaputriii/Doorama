@@ -26,16 +26,18 @@ bg-gradient-to-br from-stone-800 to-stone-600 gap-10">
 
         <h2 class="text-2xl font-bold mb-6 text-stone-800 text-center">Sign Up</h2>
 
-        <form method="POST" action="{{ route('register.post') }}">
-            @csrf
+        <form method="POST" action="{{ route('register.post') }}" novalidate>            @csrf
 
             <!-- Nama -->
             <div class="mb-4">
-                <label class="text-stone-700 text-sm">Nama</label>
+                <label class="text-stone-700 text-sm">Name</label>
                 <input type="text" name="nama" value="{{ old('nama') }}" required
                     class="w-full mt-1 border border-stone-300 p-2 rounded-lg bg-white text-stone-800 
                     focus:outline-none focus:ring-2 focus:ring-stone-600 transition"
                     placeholder="Enter your name">
+                @error('nama')
+                    <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                @enderror
             </div>
 
             <!-- Email -->
@@ -45,6 +47,9 @@ bg-gradient-to-br from-stone-800 to-stone-600 gap-10">
                     class="w-full mt-1 border border-stone-300 p-2 rounded-lg bg-white text-stone-800 
                     focus:outline-none focus:ring-2 focus:ring-stone-600 transition"
                     placeholder="Enter your email">
+                @error('email')
+                    <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                @enderror
             </div>
 
             <!-- Password -->
@@ -65,11 +70,28 @@ bg-gradient-to-br from-stone-800 to-stone-600 gap-10">
                         </svg>
                     </button>
                 </div>
-            </div>
+                <!-- Strength bar -->
+                    <div class="mt-2">
+                        <div class="w-full bg-stone-300 h-2 rounded-full">
+                            <div id="strengthBar" class="h-2 rounded-full w-0 transition-all"></div>
+                        </div>
+                        <p id="strengthText" class="text-xs mt-1 text-stone-500"></p>
+                    </div>
+
+                    <!-- Hint -->
+                    <p class="text-xs text-stone-500 mt-1">
+                        Must be at least 8 characters and include uppercase, number, and symbol.
+                    </p>
+                    @error('password')
+                        @if ($message !== 'Passwords do not match.')
+                            <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                        @endif
+                    @enderror
+                </div>
 
             <!-- Konfirmasi Password -->
             <div class="mb-4">
-                <label class="text-stone-700 text-sm">Konfirmasi Password</label>
+                <label class="text-stone-700 text-sm">Confirm Password</label>
                 <div class="relative">
                     <input type="password" name="password_confirmation" id="password_confirmation" required
                         class="w-full mt-1 border border-stone-300 p-2 pr-10 rounded-lg bg-white text-stone-800 
@@ -85,6 +107,11 @@ bg-gradient-to-br from-stone-800 to-stone-600 gap-10">
                         </svg>
                     </button>
                 </div>
+                @error('password')
+                    @if ($message === 'Passwords do not match.')
+                        <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                    @endif
+                @enderror
             </div>
 
             <!-- Button -->
@@ -92,16 +119,6 @@ bg-gradient-to-br from-stone-800 to-stone-600 gap-10">
             hover:bg-stone-800 transition shadow-md">
                 Sign Up
             </button>
-
-            @if ($errors->any())
-                <div class="mb-4 rounded-lg bg-red-100 p-3 text-sm text-red-700">
-                    <ul class="list-disc pl-5">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
 
             <!-- Divider -->
             <div class="flex items-center my-4">
@@ -112,9 +129,9 @@ bg-gradient-to-br from-stone-800 to-stone-600 gap-10">
 
             <!-- Login -->
             <p class="text-center text-sm text-stone-600">
-                Sudah punya akun?
+                Already have an account?
                 <a href="/login" class="text-stone-800 font-semibold hover:underline">
-                    Masuk
+                Sign In
                 </a>
             </p>
         </form>
@@ -132,6 +149,59 @@ bg-gradient-to-br from-stone-800 to-stone-600 gap-10">
             svg.innerHTML = isHidden ? eyeOff : eyeOpen;
         }
     </script>
+    
+    <script>
+        const passwordInput = document.getElementById('password');
+        const strengthBar = document.getElementById('strengthBar');
+        const strengthText = document.getElementById('strengthText');
 
+        passwordInput.addEventListener('input', () => {
+            const password = passwordInput.value;
+            let strength = 0;
+
+            if (password.length >= 8) strength++;
+            if (/[A-Z]/.test(password)) strength++;
+            if (/[0-9]/.test(password)) strength++;
+            if (/[^A-Za-z0-9]/.test(password)) strength++;
+
+            // reset
+            strengthBar.className = "h-2 rounded-full transition-all";
+
+            if (strength <= 1) {
+                strengthBar.style.width = "25%";
+                strengthBar.classList.add("bg-red-500");
+                strengthText.textContent = "Weak password";
+            } 
+            else if (strength <= 3) {
+                strengthBar.style.width = "60%";
+                strengthBar.classList.add("bg-yellow-500");
+                strengthText.textContent = "Medium strength";
+            } 
+            else {
+                strengthBar.style.width = "100%";
+                strengthBar.classList.add("bg-green-500");
+                strengthText.textContent = "Strong password";
+            }
+        });
+    function checkPasswordMatch() {
+        const password = passwordInput.value;
+        const confirm = confirmInput.value;
+
+        if (confirm.length === 0) {
+            confirmInput.classList.remove('border-red-500');
+            return;
+        }
+
+        if (password !== confirm) {
+            confirmInput.classList.add('border-red-500');
+        } else {
+            confirmInput.classList.remove('border-red-500');
+        }
+    }
+
+    passwordInput.addEventListener('input', checkPasswordMatch);
+    confirmInput.addEventListener('input', checkPasswordMatch);
+    </script>
+        
 </body>
 </html>

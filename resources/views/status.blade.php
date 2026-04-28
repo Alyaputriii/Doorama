@@ -27,16 +27,14 @@
             Settings
         </a>
 
-         <form action="{{ route('logout') }}" method="POST" onsubmit="return confirmLogout()">
-        @csrf
-            <button type="submit">Logout</button>
+        <form id="logoutForm" action="{{ route('logout') }}" method="POST">
+            @csrf
+            <button type="button"
+                onclick="openLogoutModal()"
+                class="hover:text-white transition">
+                Logout
+            </button>
         </form>
-
-        <script>
-        function confirmLogout() {
-            return confirm("Yakin ingin logout?");
-        }
-        </script>
     </div>
 </nav>
 
@@ -193,6 +191,54 @@
         </div>
     </div>
 </div>
+
+<div id="logoutModal"
+    class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 px-4">
+
+    <div class="w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl">
+
+        <h3 class="text-lg font-bold text-stone-800 mb-2">
+            Log Out?
+        </h3>
+
+        <p class="text-sm text-stone-600 mb-6">
+            Are you sure you want to log out from your account?
+        </p>
+
+        <div class="flex justify-end gap-3">
+            <button type="button"
+                onclick="closeLogoutModal()"
+                class="px-4 py-2 rounded-xl bg-stone-200 text-stone-700 text-sm hover:bg-stone-300 transition">
+                Cancel
+            </button>
+
+            <button type="button"
+                onclick="submitLogoutForm()"
+                class="px-4 py-2 rounded-xl bg-red-500 text-white text-sm hover:bg-red-600 transition">
+                Yes, Log Out
+            </button>
+        </div>
+
+    </div>
+</div>
+
+<script>
+function openLogoutModal() {
+    const modal = document.getElementById('logoutModal');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+}
+
+function closeLogoutModal() {
+    const modal = document.getElementById('logoutModal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+}
+
+function submitLogoutForm() {
+    document.getElementById('logoutForm').submit();
+}
+</script>
 
 </body>
 </html>

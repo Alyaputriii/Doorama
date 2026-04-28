@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Validation\Rules\Password as PasswordRule;
 use Illuminate\Support\Str;
 use Illuminate\Auth\Events\PasswordReset;
 use App\Models\User;
@@ -23,20 +24,24 @@ class AuthController extends Controller
             'email' => ['required', 'email'],
             'password' => ['required'],
         ], [
-            'email.required' => 'Email wajib diisi',
-            'email.email' => 'Format email tidak valid',
-            'password.required' => 'Password wajib diisi',
+            'email.required' => 'Email is required.',
+            'email.email' => 'Invalid email format.',
+            'password.required' => 'Password is required.',
         ]);
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
 
-            return redirect()->route('dashboard')->with('success', 'Login berhasil');
+            return redirect()
+                ->route('dashboard')
+                ->with('success', 'Login successful.');
         }
 
-        return back()->withErrors([
-            'email' => 'Email atau password salah',
-        ])->onlyInput('email');
+        return back()
+            ->withErrors([
+                'login' => 'Invalid email or password.',
+            ])
+            ->onlyInput('email');
     }
 
     public function register(Request $request)
@@ -44,15 +49,21 @@ class AuthController extends Controller
         $validated = $request->validate([
             'nama' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'unique:users,email'],
-            'password' => ['required', 'min:8', 'confirmed'],
+            'password' => [
+                'required',
+                'confirmed',
+                PasswordRule::min(8)
+                    ->mixedCase()
+                    ->numbers()
+                    ->symbols()
+            ],
         ], [
-            'nama.required' => 'Nama wajib diisi',
-            'email.required' => 'Email wajib diisi',
-            'email.email' => 'Format email tidak valid',
-            'email.unique' => 'Email sudah terdaftar',
-            'password.required' => 'Password wajib diisi',
-            'password.min' => 'Password minimal 8 karakter',
-            'password.confirmed' => 'Konfirmasi password tidak cocok',
+            'password.confirmed' => 'Passwords do not match.',
+            'nama.required' => 'Name is required.',
+            'email.required' => 'Email is required.',
+            'email.email' => 'Invalid email format.',
+            'email.unique' => 'Email already registered.',
+            'password.required' => 'Password is required.',
         ]);
 
         $user = User::create([
@@ -66,7 +77,7 @@ class AuthController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->route('login')->with('success', 'Register berhasil, silahkan login');
+        return redirect()->route('login')->with('success', 'Registration successful. Please log in');
     }
 
      public function showForgotPasswordForm()
@@ -79,8 +90,8 @@ class AuthController extends Controller
         $request->validate([
             'email' => ['required', 'email'],
         ], [
-            'email.required' => 'Email wajib diisi',
-            'email.email' => 'Format email tidak valid',
+            'email.required' => 'Email is required',
+            'email.email' => 'Invalid email format',
         ]);
 
         $status = Password::sendResetLink(
@@ -88,11 +99,11 @@ class AuthController extends Controller
         );
 
         if ($status === Password::RESET_LINK_SENT) {
-            return back()->with('success', 'Link reset password berhasil dikirim ke email.');
+            return back()->with('success', 'Password reset link has been sent to your email.');
         }
 
         return back()->withErrors([
-            'email' => 'Email tidak ditemukan atau gagal mengirim email.',
+            'email' => 'Email not found or failed to send reset link.',
         ])->onlyInput('email');
     }
 
@@ -109,13 +120,21 @@ class AuthController extends Controller
         $request->validate([
             'token' => ['required'],
             'email' => ['required', 'email'],
-            'password' => ['required', 'min:8', 'confirmed'],
+            'password' => [
+                'required',
+                'confirmed',
+                PasswordRule::min(8)
+                    ->mixedCase()
+                    ->numbers()
+                    ->symbols()
+            ],  
         ], [
-            'email.required' => 'Email wajib diisi',
-            'email.email' => 'Format email tidak valid',
-            'password.required' => 'Password baru wajib diisi',
-            'password.min' => 'Password minimal 8 karakter',
-            'password.confirmed' => 'Konfirmasi password tidak cocok',
+            'password.confirmed' => 'Passwords do not match.',
+            'nama.required' => 'Name is required.',
+            'email.required' => 'Email is required.',
+            'email.email' => 'Invalid email format.',
+            'email.unique' => 'Email already registered.',
+            'password.required' => 'Password is required.',
         ]);
 
         $status = Password::reset(
@@ -132,11 +151,23 @@ class AuthController extends Controller
         if ($status === Password::PASSWORD_RESET) {
             return redirect()
                 ->route('login')
-                ->with('success', 'Password berhasil direset. Silakan login.');
+                ->with('success', 'Password has been reset successfully. Please log in.');
         }
 
         return back()->withErrors([
-            'email' => 'Token reset password tidak valid atau sudah kedaluwarsa.',
+            'email' => 'Invalid or expired password reset token.',
         ])->withInput($request->only('email'));
     }
+        public function logout(Request $request)
+    {
+        Auth::logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()
+            ->route('login')
+            ->with('success', 'Logged out successfully.');
+    }
 }
+

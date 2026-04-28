@@ -24,12 +24,20 @@ class DashboardController extends Controller
         $recentActivities = AccessLog::latest('created_at')
             ->take(3)
             ->get();
+        
+        $lastFailed = AccessLog::where('result', 'failed')
+            ->latest('created_at')
+            ->first();
+
+        $lastActivity = $latestLog;
 
         return view('dashboard', compact(
             'user',
             'doorStatus',
             'failedAttempts',
-            'recentActivities'
+            'recentActivities',
+            'lastFailed',
+            'lastActivity'
         ));
     }
 }

@@ -106,7 +106,7 @@ class SettingsController extends Controller
 
         return redirect()
             ->route('settings')
-            ->with('success', 'Pattern berhasil disimpan.');
+            ->with('success', 'Pattern saved successfully.');
     }
 
     public function reset()
@@ -119,6 +119,6 @@ class SettingsController extends Controller
 
         return redirect()
             ->route('settings')
-            ->with('success', 'Pattern berhasil direset.');
+            ->with('success', 'Pattern reset successfully.');
     }
 }

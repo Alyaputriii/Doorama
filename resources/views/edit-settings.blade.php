@@ -87,8 +87,9 @@
                 Cancel
             </a>
 
-            <button type="submit"
+            <button type="button"
                 id="saveBtn"
+                onclick="openSaveModal()"
                 class="px-4 py-2 rounded-xl bg-stone-700 text-white text-sm hover:bg-stone-800 transition">
                 Save Pattern
             </button>
@@ -116,11 +117,14 @@
 
     function updateSaveButtonState() {
         const knockCount = parseInt(knockCountInput.value) || 0;
-        const disabled = knockCount < 3;
 
-        saveBtn.disabled = disabled;
-        saveBtn.classList.toggle('opacity-50', disabled);
-        saveBtn.classList.toggle('cursor-not-allowed', disabled);
+        saveBtn.disabled = false;
+
+        if (knockCount < 3) {
+            saveBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        } else {
+            saveBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
     }
 
     function renderBars(values) {
@@ -241,6 +245,29 @@
         }
     });
 
+    function openSaveModal() {
+        const knockCount = parseInt(knockCountInput.value) || 0;
+
+        if (knockCount < 3) {
+            statusText.textContent = 'Failed';
+            return;
+        }
+
+        const modal = document.getElementById('saveModal');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+
+    function closeSaveModal() {
+        const modal = document.getElementById('saveModal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+
+    function submitSaveForm() {
+        savePatternForm.submit();
+    }
+
     window.addEventListener('DOMContentLoaded', () => {
         const existingIntervals = intervalsInput.value.trim();
         const existingKnockCount = parseInt(knockCountInput.value) || 0;
@@ -260,5 +287,36 @@
         }
     });
 </script>
+
+    <!-- SAVE CONFIRMATION MODAL -->
+    <div id="saveModal"
+        class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 px-4">
+
+        <div class="w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl">
+
+            <h3 class="text-lg font-bold text-stone-800 mb-2">
+                Save Pattern?
+            </h3>
+
+            <p class="text-sm text-stone-600 mb-6">
+                Are you sure you want to save this knock pattern?
+            </p>
+
+            <div class="flex justify-end gap-3">
+                <button type="button"
+                    onclick="closeSaveModal()"
+                    class="px-4 py-2 rounded-xl bg-stone-200 text-stone-700 text-sm hover:bg-stone-300 transition">
+                    Cancel
+                </button>
+
+                <button type="button"
+                    onclick="submitSaveForm()"
+                    class="px-4 py-2 rounded-xl bg-green-500 text-white text-sm hover:bg-green-600 transition">
+                    Yes, Save
+                </button>
+            </div>
+
+        </div>
+    </div>
 </body>
 </html>

@@ -18,7 +18,7 @@
             </div>
 
             <div class="flex-1">
-                <p class="text-sm font-semibold text-green-800">Berhasil</p>
+                <p class="text-sm font-semibold text-green-800">Success</p>
                 <p class="text-sm text-green-700">{{ session('success') }}</p>
             </div>
 
@@ -98,18 +98,14 @@
 
         <a href="/settings" class="hover:text-white transition">Settings</a>
         
-        <!-- LOGOUT -->
-        <form action="{{ route('logout') }}" method="POST" onsubmit="return confirmLogout()">
-        @csrf
-            <button type="submit">Logout</button>
+       <form id="logoutForm" action="{{ route('logout') }}" method="POST">
+            @csrf
+            <button type="button"
+                onclick="openLogoutModal()"
+                class="hover:text-white transition">
+                Logout
+            </button>
         </form>
-
-        <script>
-        function confirmLogout() {
-            return confirm("Yakin ingin logout?");
-        }
-        </script>
-
     </div>
 
 </nav>
@@ -119,7 +115,7 @@
 <!-- GREETING -->
 <div class="mb-8 md:mb-10 text-center md:text-left">
     <p class="text-stone-100 text-base md:text-xl font-bold tracking-wide">
-        Hai, {{ Auth::user()->nama ?? 'User' }} 👋
+        Hi, {{ Auth::user()->nama ?? 'User' }} 👋
     </p>
 </div>
 
@@ -135,8 +131,9 @@
                 {{ ucfirst($doorStatus ?? 'unknown') }}
             </span>
         </div>
-        <p class="text-stone-500 text-xs md:text-sm mt-6">Last activity: 12:01</p>
-    </div>
+        <p class="text-stone-500 text-xs md:text-sm mt-6">Last activity: 
+        {{ $lastActivity ? $lastActivity->created_at->format('H:i') : '-' }}</p>
+        </div>
 
     <!-- CARD 2 -->
     <div class="bg-white/90 backdrop-blur rounded-2xl shadow-lg p-5 md:p-6 flex flex-col justify-between hover:-translate-y-1 transition duration-300">
@@ -147,19 +144,34 @@
                 <b class="text-stone-900">{{ $failedAttempts ?? 0 }}</b>
             </p>
         </div>
-        <p class="text-stone-500 text-xs md:text-sm mt-6">Last Failed: 13:22</p>
+        <p class="text-stone-500 text-xs md:text-sm mt-6">Last Failed:  {{ $lastFailed ? $lastFailed->created_at->format('H:i') : '-' }}</p>
     </div>
 
     <!-- CARD 3 -->
     <div class="bg-white/90 backdrop-blur rounded-2xl shadow-lg p-5 md:p-6 flex flex-col justify-between hover:-translate-y-1 transition duration-300">
         <div>
             <h2 class="text-stone-700 font-semibold mb-3 text-sm md:text-base">System</h2>
+
             <p class="text-stone-600 text-xs md:text-sm">
                 Status:
-                <span class="text-green-600 font-semibold">Online</span>
+                @php
+                    $status = $lastActivity->system_mode ?? 'unknown';
+                @endphp
+
+                <span class="font-semibold
+                    {{ $status === 'online' ? 'text-green-600' : 
+                    ($status === 'offline' ? 'text-red-600' : 'text-stone-500') }}">
+                    {{ $status === 'unknown' ? 'Not connected' : ucfirst($status) }}
+                </span>
             </p>
         </div>
-        <p class="text-stone-600 text-xs md:text-sm mt-6">Battery: 92%</p>
+
+        <p class="text-stone-600 text-xs md:text-sm mt-6">
+            Battery:
+            {{ isset($lastActivity->battery_level) && $lastActivity->battery_level !== null 
+                ? $lastActivity->battery_level . '%' 
+                : '-' }}
+        </p>
     </div>
 
     <!-- RECENT ACTIVITY -->
@@ -180,7 +192,7 @@
                 </div>
             @empty
                 <div class="flex justify-between">
-                    <span>Tidak ada aktivitas</span>
+                    <span>No activity yet</span>
                 </div>
             @endforelse
 
@@ -192,5 +204,52 @@
 
 </div>
 
+<div id="logoutModal"
+    class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 px-4">
+
+    <div class="w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl">
+
+        <h3 class="text-lg font-bold text-stone-800 mb-2">
+            Log Out?
+        </h3>
+
+        <p class="text-sm text-stone-600 mb-6">
+            Are you sure you want to log out from your account?
+        </p>
+
+        <div class="flex justify-end gap-3">
+            <button type="button"
+                onclick="closeLogoutModal()"
+                class="px-4 py-2 rounded-xl bg-stone-200 text-stone-700 text-sm hover:bg-stone-300 transition">
+                Cancel
+            </button>
+
+            <button type="button"
+                onclick="submitLogoutForm()"
+                class="px-4 py-2 rounded-xl bg-red-500 text-white text-sm hover:bg-red-600 transition">
+                Yes, Log Out
+            </button>
+        </div>
+
+    </div>
+</div>
+
+<script>
+function openLogoutModal() {
+    const modal = document.getElementById('logoutModal');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+}
+
+function closeLogoutModal() {
+    const modal = document.getElementById('logoutModal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+}
+
+function submitLogoutForm() {
+    document.getElementById('logoutForm').submit();
+}
+</script>
 </body>
 </html>
